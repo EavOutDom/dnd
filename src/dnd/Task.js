@@ -1,7 +1,21 @@
 import styles from "./task.module.css";
+import { Draggable } from "react-beautiful-dnd";
 
-const Task = ({ task }) => {
-  return <div className={styles.container}>{task.content}</div>;
+const Task = ({ task, index }) => {
+  return (
+    <Draggable draggableId={task.id} index={index}>
+      {(provided) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          className={styles.container}
+        >
+          {task.content}
+        </div>
+      )}
+    </Draggable>
+  );
 };
 
 export default Task;
