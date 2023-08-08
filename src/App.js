@@ -16,21 +16,28 @@ export default function App() {
     ) {
       return;
     }
-    const column = data.columns[source.droppableId];
-    const newTaskIds = Array.from(column.taskIds);
-    newTaskIds.splice(source.index, 1);
-    newTaskIds.splice(destination.index, 0, draggableId);
-    const newColumn = {
-      ...column,
-      taskIds: newTaskIds,
-    };
-    setData((pre) => ({
-      ...pre,
-      columns: {
-        ...pre.columns,
-        [newColumn.id]: newColumn,
-      },
-    }));
+    const start = data.columns[source.droppableId];
+    const finish = data.columns[destination.draggableId];
+    if (start === finish) {
+      const newTaskIds = Array.from(column.taskIds);
+      newTaskIds.splice(source.index, 1);
+      newTaskIds.splice(destination.index, 0, draggableId);
+      const newColumn = {
+        ...column,
+        taskIds: newTaskIds,
+      };
+      setData((pre) => ({
+        ...pre,
+        columns: {
+          ...pre.columns,
+          [newColumn.id]: newColumn,
+        },
+      }));
+      return;
+    }
+
+    //moving between list 
+    // const newTaskIds = Array.from(start.)
   };
 
   return (
