@@ -17,13 +17,13 @@ export default function App() {
       return;
     }
     const start = data.columns[source.droppableId];
-    const finish = data.columns[destination.draggableId];
+    const finish = data.columns[destination.droppableId];
     if (start === finish) {
-      const newTaskIds = Array.from(column.taskIds);
+      const newTaskIds = Array.from(start.taskIds);
       newTaskIds.splice(source.index, 1);
       newTaskIds.splice(destination.index, 0, draggableId);
       const newColumn = {
-        ...column,
+        ...start,
         taskIds: newTaskIds,
       };
       setData((pre) => ({
@@ -36,8 +36,28 @@ export default function App() {
       return;
     }
 
-    //moving between list 
-    // const newTaskIds = Array.from(start.)
+    //moving between list
+    const startTaskIds = Array.from(start.taskIds);
+    startTaskIds.splice(source.index, 1);
+    const newStart = {
+      ...start,
+      taskIds: startTaskIds,
+    };
+    const finishTaskIds = Array.from(finish.taskIds);
+    finishTaskIds.splice(destination.index, 0, draggableId);
+    const newFinish = {
+      ...finish,
+      taskIds: finishTaskIds,
+    };
+    console.log(newFinish);
+    setData((pre) => ({
+      ...pre,
+      columns: {
+        ...pre.columns,
+        [newStart.id]: newStart,
+        [newFinish.id]: newFinish,
+      },
+    }));
   };
 
   return (
