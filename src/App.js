@@ -2,13 +2,13 @@ import "./styles.css";
 import { initialData } from "./initial-data";
 import { useState } from "react";
 import Column from "./dnd/Colum";
-import { DragDropContext } from "react-beautiful-dnd";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 export default function App() {
   const [data, setData] = useState(initialData);
 
   const handleDragEnd = (result) => {
-    const { destination, source, draggableId } = result;
+    const { destination, source, draggableId, type } = result;
     if (!destination) return;
     if (
       destination.droppableId === source.droppableId &&
@@ -16,6 +16,18 @@ export default function App() {
     ) {
       return;
     }
+
+    if (type === "column") {
+      const newOrderColumns = Array.from(data.columnsOrder);
+      newOrderColumns.splice(source.index, 1);
+      newOrderColumns.splice(destination.index, 0, draggableId);
+      setData((pre) => ({
+        ...pre,
+        columnsOrder: newOrderColumns,
+      }));
+      return;
+    }
+
     const start = data.columns[source.droppableId];
     const finish = data.columns[destination.droppableId];
     if (start === finish) {
@@ -49,7 +61,6 @@ export default function App() {
       ...finish,
       taskIds: finishTaskIds,
     };
-    console.log(newFinish);
     setData((pre) => ({
       ...pre,
       columns: {
@@ -63,11 +74,33 @@ export default function App() {
   return (
     <div className="App">
       <DragDropContext onDragEnd={handleDragEnd}>
-        {data.columnsOrder.map((order) => {
-          const column = data.columns[order];
-          const tasks = column.taskIds.map((id) => data.tasks[id]);
-          return <Column key={column.id} column={column} tasks={tasks} />;
-        })}
+        <Droppable
+          droppableId="all-columns"
+          type="column"
+          direction="horizontal"
+        >
+          {(provided) => (
+            <div
+              style={{ display: "flex" }}
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              {data.columnsOrder.map((order, index) => {
+                const column = data.columns[order];
+                const tasks = column.taskIds.map((id) => data.tasks[id]);
+                return (
+                  <Column
+                    key={column.id}
+                    column={column}
+                    tasks={tasks}
+                    index={index}
+                  />
+                );
+              })}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
       </DragDropContext>
     </div>
   );
