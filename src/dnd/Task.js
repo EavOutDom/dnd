@@ -1,7 +1,8 @@
 import styles from "./task.module.css";
 import { Draggable } from "react-beautiful-dnd";
+import { memo } from "react";
 
-const Task = ({ task, index }) => {
+const Task = memo(({ task, index }) => {
   return (
     <Draggable draggableId={task.id} index={index}>
       {(provided) => (
@@ -16,6 +17,6 @@ const Task = ({ task, index }) => {
       )}
     </Draggable>
   );
-};
+});
 
 export default Task;
